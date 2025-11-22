@@ -55,9 +55,13 @@ mvn test -DsuiteXmlFile=testng.xml
 
 
 📦 Outputs
-- Scraped articles and images are saved in elpais_articles/
-- GitHub Actions uploads these results as an artifact named elpais_outputs
-- Reviewers can download the artifact directly from the Actions run page
+- Scraped articles and cover images → saved in elpais_articles/article_1 … article_5/
+- Metadata index → elpais_articles/index.csv (ID, title, date, URL, image count, folder path)
+- Translated headers → elpais_articles/translated_titles.txt
+- Repeated word frequency analysis → elpais_articles/repeated_words.txt
+- GitHub Actions uploads the entire elpais_articles/ folder as an artifact named elpais_outputs
+- Reviewers can download the artifact directly from the Actions run page and inspect all outputs without checking logs
+
 
 🌐 CI/CD
 - Automated build and test pipeline using GitHub Actions
