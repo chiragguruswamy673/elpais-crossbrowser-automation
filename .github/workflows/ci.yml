@@ -1,4 +1,4 @@
-name: CI
+name: CrossBrowser CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,13 +20,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Set up Maven
+        run: mvn -v
 
-      - name: Run tests
-        run: mvn test
+      - name: Run TestNG suite on BrowserStack
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: mvn test -DsuiteXmlFile=testng.xml
 
-      - name: Upload outputs
+      - name: Upload scraped articles
         uses: actions/upload-artifact@v3
         with:
           name: elpais_outputs
