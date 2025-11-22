@@ -30,7 +30,7 @@ jobs:
         run: mvn test -DsuiteXmlFile=testng.xml
 
       - name: Upload scraped articles
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: elpais_outputs
           path: elpais_articles/
