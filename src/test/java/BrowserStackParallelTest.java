@@ -1,16 +1,11 @@
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.testng.annotations.AfterMethod;
+import org.testng.Assert;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
-import org.testng.annotations.Optional;   // <-- add this
+
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,9 +40,15 @@ public class BrowserStackParallelTest {
 
         caps.setCapability("bstack:options", bstackOptions);
 
-        WebDriver driver = new RemoteWebDriver(new URL(HUB_URL), caps);
+        driver = new RemoteWebDriver(new URL(HUB_URL), caps);
         driver.get("https://elpais.com/opinion/");
-        System.out.println("[" + browser + "] Title: " + driver.getTitle());
+        String title = driver.getTitle();
+
+        System.out.println("[" + browser + "] Title: " + title);
+
+        // ✅ Assertion to report pass/fail
+        Assert.assertTrue(title.toLowerCase().contains("opinión"), "Page title does not contain 'Opinión'");
+
         driver.quit();
     }
 }
