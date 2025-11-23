@@ -23,6 +23,10 @@ jobs:
       - name: Set up Maven
         run: mvn -v
 
+      # 🔑 Create translation-key.json from GitHub secret
+      - name: Set up translation key
+        run: echo "${{ secrets.TRANSLATION_KEY_JSON }}" > translation-key.json
+
       - name: Run TestNG suite on BrowserStack
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}

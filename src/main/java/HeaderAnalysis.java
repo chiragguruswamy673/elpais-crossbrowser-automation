@@ -1,3 +1,8 @@
+package org.example;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class HeaderAnalysis {
@@ -25,12 +30,18 @@ public class HeaderAnalysis {
             }
         }
 
-        // Print words repeated more than twice
+        // Print and save words repeated more than twice
         System.out.println("Repeated words across headers:");
-        for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
-            if (entry.getValue() > 2) {
-                System.out.println(entry.getKey() + " → " + entry.getValue());
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter("elpais_articles/repeated_words.txt"))) {
+            for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
+                if (entry.getValue() > 2) {
+                    System.out.println(entry.getKey() + " → " + entry.getValue());
+                    writer.println(entry.getKey() + " → " + entry.getValue());
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
