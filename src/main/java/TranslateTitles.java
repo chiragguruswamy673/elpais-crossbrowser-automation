@@ -11,6 +11,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TranslateTitles {
     public static void main(String[] args) {
@@ -27,7 +29,8 @@ public class TranslateTitles {
 
             // Create output file writer inside elpais_articles folder
             try (TranslationServiceClient client = TranslationServiceClient.create(settings);
-                 PrintWriter writer = new PrintWriter(new FileWriter("elpais_articles/translated_titles.txt", true))) {
+                 PrintWriter writer = new PrintWriter(new FileWriter("elpais_articles/translated_titles.txt", false))) {
+                // false = overwrite file each run, avoids uncontrolled growth
 
                 // Replace with your actual project ID from the JSON key
                 String projectId = "elpais-translation-project";
@@ -42,29 +45,34 @@ public class TranslateTitles {
                         "El Roto: Corrupción natural"
                 };
 
+                // Deduplication set
+                Set<String> seen = new HashSet<>();
+
                 // Translate each title to English and write to file
                 for (String title : titles) {
-                    TranslateTextRequest request = TranslateTextRequest.newBuilder()
-                            .setParent(parent)
-                            .setMimeType("text/plain")
-                            .setTargetLanguageCode("en")
-                            .addContents(title)
-                            .build();
+                    if (seen.add(title)) { // only process if not already seen
+                        TranslateTextRequest request = TranslateTextRequest.newBuilder()
+                                .setParent(parent)
+                                .setMimeType("text/plain")
+                                .setTargetLanguageCode("en")
+                                .addContents(title)
+                                .build();
 
-                    TranslateTextResponse response = client.translateText(request);
+                        TranslateTextResponse response = client.translateText(request);
 
-                    for (Translation translation : response.getTranslationsList()) {
-                        String translated = translation.getTranslatedText();
+                        for (Translation translation : response.getTranslationsList()) {
+                            String translated = translation.getTranslatedText();
 
-                        // Print to console for CI logs
-                        System.out.println("Original: " + title);
-                        System.out.println("Translated: " + translated);
-                        System.out.println("---");
+                            // Print to console for CI logs
+                            System.out.println("Original: " + title);
+                            System.out.println("Translated: " + translated);
+                            System.out.println("---");
 
-                        // Save to artifact file
-                        writer.println("Original: " + title);
-                        writer.println("Translated: " + translated);
-                        writer.println();
+                            // Save to artifact file
+                            writer.println("Original: " + title);
+                            writer.println("Translated: " + translated);
+                            writer.println();
+                        }
                     }
                 }
             }
